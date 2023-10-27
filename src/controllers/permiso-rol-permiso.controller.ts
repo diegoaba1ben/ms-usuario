@@ -67,6 +67,11 @@ export class PermisoRolPermisoController {
       },
     }) rolPermiso: Omit<RolPermiso, 'id'>,
   ): Promise<RolPermiso> {
+    //Validaciones antes de crear-Rol Permiso
+    if (rolPermiso.permisoId !== id) {
+      throw new Error('La Id del permiso en el cuerpo no coincide con la id de la URL')
+    }
+    //Crear el RolPermiso
     return this.permisoRepository.rolPermisos(id).create(rolPermiso);
   }
 

@@ -2,13 +2,14 @@ import {
   repository,
 } from '@loopback/repository';
 import {
-  param,
+  HttpErrors,
   get,
   getModelSchemaRef,
+  param,
 } from '@loopback/rest';
 import {
-  RolPermiso,
   Permiso,
+  RolPermiso,
 } from '../models';
 import {RolPermisoRepository} from '../repositories';
 
@@ -33,6 +34,28 @@ export class RolPermisoPermisoController {
   async getPermiso(
     @param.path.number('id') id: typeof RolPermiso.prototype.id,
   ): Promise<Permiso> {
-    return this.rolPermisoRepository.permiso(id);
+    try {
+      // Validación del ID: Verifica si el ID es numérico y no nulo
+      if (id == undefined || id === null) {
+        throw new HttpErrors.BadRequest('id no proporcionado');
+      }
+
+      // Código para recuperar el Permiso
+      const permiso: Permiso | null = await this.rolPermisoRepository.permiso(id);
+
+      // Si el permiso no existe, arroja un error NotFound
+      if (!permiso) {
+        throw new HttpErrors.NotFound('Permiso no encontrado');
+      }
+
+      return permiso;
+    } catch (error) {
+      // Manejo de errores: arroja errores HTTP adecuados según la situación
+      if (error instanceof HttpErrors.HttpError) {
+        throw error; // Si es un error HTTP, se regresa tal cual.
+      }
+      console.error(error); // Loggea otros tipos de errores para diagnóstico.
+      throw new HttpErrors.InternalServerError('Error interno del servidor');
+    }
   }
 }

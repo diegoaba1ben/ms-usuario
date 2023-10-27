@@ -1,4 +1,4 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
 import {RolPermiso} from './rol-permiso.model';
 
 @model()
@@ -13,6 +13,14 @@ export class Permiso extends Entity {
   @property({
     type: 'string',
     required: true,
+    jsonSchema: {
+      minLength: 3,//Longitud mínima
+      maxLength: 15,//Longitud máxima.
+      pattern: '^[A-Za-zzÀ-ÿ]+$', //Solo letras, incluso de otros idiomas
+      errorMessage: {
+        pattern: 'El nombre debe contener únicamente letras.'
+      }
+    }
   })
   nombrePermiso: string;
 
