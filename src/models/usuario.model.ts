@@ -1,4 +1,5 @@
-import {Entity, hasMany, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Rol} from './rol.model';
 import {RolUsuario} from './rol-usuario.model';
 
 @model()
@@ -60,12 +61,40 @@ export class Usuario extends Entity {
   })
   password: string;
 
-  @hasMany(() => RolUsuario)
-  rolUsuarios: RolUsuario[];
+  @hasMany(() => Rol, {through: {model: () => RolUsuario}})
+  rols: Rol[];
 
   constructor(data?: Partial<Usuario>) {
     super(data);
   }
+  isValid(): boolean {
+    //validación de letras
+    const letrasRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ]+$/u;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const lowercaseRegex = /[a-z]/;
+    const uppercaseRegex = /[A-Z]/;
+    const numberRegex = /\d/;
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+    if (!this.nombre || !this.apellido ||
+      !letrasRegex.test(this.nombre) || !letrasRegex.test(this.apellido)) {
+      return false// devuelve falso si los espacios está en blanco
+    }
+    if (
+      !this.email ||
+      !this.password ||
+      !emailRegex.test(this.email) ||
+      this.password.length < 8 || // Mínimo 8 caracteres
+      this.password.length > 12 || // Máximo 12 caracteres
+      !lowercaseRegex.test(this.password) || // Al menos una letra minúscula
+      !uppercaseRegex.test(this.password) || // Al menos una letra mayúscula
+      !numberRegex.test(this.password) ||// Al menos un número
+      !specialCharRegex.test(this.password)) {
+      return false // devuelve falso si los espacios están en blanco
+    }
+    return true
+  }
+
 }
 
 export interface UsuarioRelations {

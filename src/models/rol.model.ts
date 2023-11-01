@@ -1,5 +1,5 @@
-import {Entity, hasMany, model, property} from '@loopback/repository';
-import {RolUsuario} from './rol-usuario.model';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Permiso} from './permiso.model';
 import {RolPermiso} from './rol-permiso.model';
 
 @model()
@@ -15,38 +15,42 @@ export class Rol extends Entity {
     type: 'string',
     required: true,
     jsonSchema: {
-      minLength: 3, //Longitud mínima.
-      maxLength: 10, // Máximo 10 caracteres
-      pattern: '^[A-Za-z]+$', //Solo letras
+      minLength: 3,
+      maxLength: 20,
+      pattern: '^[A-Za-z]+$',
       errorMessage: {
-        pattern: 'El nombre del rol debe contener solamente letras.'
+        pattern: 'El nombre del rol debe contener solamente letras.',
       },
     },
   })
   nombreRol: string;
 
+
   @property({
     type: 'string',
     required: true,
     jsonSchema: {
-      minLength: 3, // Longitud mínima
-      maxLength: 50, // Longitud máxima.
-      pattern: '[A-Za-z]+$',// Solo letras en el campo
+      minLength: 3,
+      maxLength: 50,
+      pattern: '^[A-Za-z]+$',
       errorMessage: {
-        pattern: 'La descripción de los roles debe contener letras'
-      }
-    }
+        pattern: 'La descripción de los roles debe contener 50 caracteres.',
+      },
+    },
   })
   descripcion: string;
 
-  @hasMany(() => RolUsuario)
-  rolUsuarios: RolUsuario[];
+  @hasMany(() => Permiso, {through: {model: () => RolPermiso}})
+  permisos: Permiso[];
 
-  @hasMany(() => RolPermiso)
-  rolPermisos: RolPermiso[];
-
-  constructor(data?: Partial<Rol>) {
-    super(data);
+  isValid(): boolean {
+    // Validaciones para el nombre y la descripción
+    const letrasRegex = /^[A-Za-z]+$/;
+    const nombreRolValido = this.nombreRol && letrasRegex.test(this.nombreRol) &&
+      this.nombreRol.length >= 3;
+    const descripcionValida = this.descripcion && this.descripcion.length >= 3 &&
+      this.descripcion.length <= 50;
+    return true;
   }
 }
 
@@ -55,3 +59,4 @@ export interface RolRelations {
 }
 
 export type RolWithRelations = Rol & RolRelations;
+

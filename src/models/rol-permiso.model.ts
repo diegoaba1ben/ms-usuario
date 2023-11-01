@@ -1,6 +1,4 @@
-import {Entity, belongsTo, model, property} from '@loopback/repository';
-import {Permiso} from './permiso.model';
-import {Rol} from './rol.model';
+import {Entity, model, property} from '@loopback/repository';
 
 @model()
 export class RolPermiso extends Entity {
@@ -22,14 +20,6 @@ export class RolPermiso extends Entity {
     id: true, // Clave foránea de la otra relación, también debe tener el modificador 'id'
   })
   permisoId: number;
-
-  // Relación con Rol
-  @belongsTo(() => Rol)
-  rol: Rol;
-
-  // Relación con Permiso
-  @belongsTo(() => Permiso)
-  permiso: Permiso;
 
   constructor(data?: Partial<RolPermiso>) {
     super(data);

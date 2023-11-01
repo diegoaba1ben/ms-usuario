@@ -6,3 +6,5 @@ export * from './rol-usuario-rol.controller';
 export * from './rol-rol-permiso.controller';
 export * from './permiso-rol-permiso.controller';
 export * from './rol-permiso-permiso.controller';
+export * from './usuario-rol.controller';
+export * from './rol-permiso.controller';
