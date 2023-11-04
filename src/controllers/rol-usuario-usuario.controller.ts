@@ -2,9 +2,10 @@ import {
   repository,
 } from '@loopback/repository';
 import {
-  param,
+  HttpErrors,
   get,
   getModelSchemaRef,
+  param,
 } from '@loopback/rest';
 import {
   RolUsuario,
@@ -33,6 +34,12 @@ export class RolUsuarioUsuarioController {
   async getUsuario(
     @param.path.number('id') id: typeof RolUsuario.prototype.id,
   ): Promise<Usuario> {
+    //Validación del RolUsuario
+    const existingRolUsuario = await this.rolUsuarioRepository.findById(id);
+    if (!existingRolUsuario) {
+      throw new HttpErrors.NotFound('RolUsuario no encontrado');
+    }
+    //Obtiene el usuario asociado
     return this.rolUsuarioRepository.usuario(id);
   }
 }

@@ -5,20 +5,20 @@ import {
   repository,
   Where,
 } from '@loopback/repository';
-  import {
+import {
   del,
   get,
   getModelSchemaRef,
   getWhereSchemaFor,
+  HttpErrors,
   param,
   patch,
   post,
   requestBody,
 } from '@loopback/rest';
 import {
-Rol,
-RolPermiso,
-Permiso,
+  Permiso,
+  Rol
 } from '../models';
 import {RolRepository} from '../repositories';
 
@@ -67,6 +67,13 @@ export class RolPermisoController {
       },
     }) permiso: Omit<Permiso, 'id'>,
   ): Promise<Permiso> {
+    // Validación del rolId
+    const rol = await this.rolRepository.findById(id);
+    if (!rol) {
+      throw new HttpErrors.NotFound('Rol no encontrado');
+    }
+
+    // Crear el Permiso
     return this.rolRepository.permisos(id).create(permiso);
   }
 

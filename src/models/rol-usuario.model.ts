@@ -22,6 +22,16 @@ export class RolUsuario extends Entity {
   constructor(data?: Partial<RolUsuario>) {
     super(data);
   }
+
+  isValid(): {isValid: boolean, error?: string} {
+    if (this.usuarioId == null) {
+      return {isValid: false, error: 'El usuarioId es obligatorio.'};
+    }
+    if (this.rolId == null) {
+      return {isValid: false, error: 'El rolId es obligatorio.'};
+    }
+    return {isValid: true};
+  }
 }
 
 export interface RolUsuarioRelations {
@@ -29,3 +39,4 @@ export interface RolUsuarioRelations {
 }
 
 export type RolUsuarioWithRelations = RolUsuario & RolUsuarioRelations;
+

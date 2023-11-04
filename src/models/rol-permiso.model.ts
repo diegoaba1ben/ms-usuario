@@ -11,18 +11,23 @@ export class RolPermiso extends Entity {
 
   @property({
     type: 'number',
-    id: true, // Clave foránea, debe tener el mismo modificador 'id'
+    required: true,
   })
   rolId: number;
 
   @property({
     type: 'number',
-    id: true, // Clave foránea de la otra relación, también debe tener el modificador 'id'
+    required: true,
   })
   permisoId: number;
 
   constructor(data?: Partial<RolPermiso>) {
     super(data);
+  }
+
+  isValid(): boolean {
+    // Validación de las relaciones
+    return this.rolId != null && this.permisoId != null;
   }
 }
 
@@ -31,4 +36,3 @@ export interface RolPermisoRelations {
 }
 
 export type RolPermisoWithRelations = RolPermiso & RolPermisoRelations;
-

@@ -2,13 +2,13 @@ import {
   repository,
 } from '@loopback/repository';
 import {
-  param,
   get,
   getModelSchemaRef,
+  param,
 } from '@loopback/rest';
 import {
-  RolUsuario,
   Rol,
+  RolUsuario,
 } from '../models';
 import {RolUsuarioRepository} from '../repositories';
 
@@ -30,9 +30,13 @@ export class RolUsuarioRolController {
       },
     },
   })
+  //Validación del RolUsuario
   async getRol(
     @param.path.number('id') id: typeof RolUsuario.prototype.id,
   ): Promise<Rol> {
+    //Validación del RolUsuario
+    const existingRolUsuario = await this.rolUsuarioRepository.findById(id);
+    //Obtener el Rol asociado al RolUsuario
     return this.rolUsuarioRepository.rol(id);
   }
 }

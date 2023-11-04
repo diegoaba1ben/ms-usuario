@@ -10,20 +10,23 @@ import {
   get,
   getModelSchemaRef,
   getWhereSchemaFor,
+  HttpErrors,
   param,
   patch,
   post,
   requestBody,
 } from '@loopback/rest';
 import {
-  Usuario,
   RolUsuario,
+  Usuario
 } from '../models';
-import {UsuarioRepository} from '../repositories';
+
+import {RolRepository, UsuarioRepository} from '../repositories';
 
 export class UsuarioRolUsuarioController {
   constructor(
     @repository(UsuarioRepository) protected usuarioRepository: UsuarioRepository,
+    @repository(RolRepository) protected rolRepository: RolRepository,
   ) { }
 
   @get('/usuarios/{id}/rol-usuarios', {
@@ -38,12 +41,22 @@ export class UsuarioRolUsuarioController {
       },
     },
   })
+
   async find(
     @param.path.number('id') id: number,
     @param.query.object('filter') filter?: Filter<RolUsuario>,
   ): Promise<RolUsuario[]> {
+    //Validación del usuario
+    const existingUsuario = await this.usuarioRepository.findById(id);
+    if (!existingUsuario) {
+      throw new HttpErrors.NotFound('Usuario no encontrado');
+    }
+    //Obtiene los RolUsuario asociados al usuario
     return this.usuarioRepository.rolUsuarios(id).find(filter);
   }
+
+
+  //obtener RolUsuario específico por su id
 
   @post('/usuarios/{id}/rol-usuarios', {
     responses: {
@@ -53,6 +66,7 @@ export class UsuarioRolUsuarioController {
       },
     },
   })
+
   async create(
     @param.path.number('id') id: typeof Usuario.prototype.id,
     @requestBody({
@@ -67,6 +81,13 @@ export class UsuarioRolUsuarioController {
       },
     }) rolUsuario: Omit<RolUsuario, 'id'>,
   ): Promise<RolUsuario> {
+    //Validación del usuario
+    const existingUsuario = await this.usuarioRepository.findById(id);
+    if (!existingUsuario) {
+      throw new HttpErrors.NotFound('Usuario no encontrado');
+    }
+
+    //Crear el RolUsuario
     return this.usuarioRepository.rolUsuarios(id).create(rolUsuario);
   }
 

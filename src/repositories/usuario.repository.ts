@@ -1,7 +1,7 @@
-import {inject, Getter} from '@loopback/core';
-import {DefaultCrudRepository, repository, HasManyRepositoryFactory, HasManyThroughRepositoryFactory} from '@loopback/repository';
+import {Getter, inject} from '@loopback/core';
+import {DefaultCrudRepository, HasManyRepositoryFactory, HasManyThroughRepositoryFactory, repository} from '@loopback/repository';
 import {MongodbDataSource} from '../datasources';
-import {Usuario, UsuarioRelations, RolUsuario, Rol} from '../models';
+import {Rol, RolUsuario, Usuario, UsuarioRelations} from '../models';
 import {RolUsuarioRepository} from './rol-usuario.repository';
 import {RolRepository} from './rol.repository';
 
@@ -14,9 +14,9 @@ export class UsuarioRepository extends DefaultCrudRepository<
   public readonly rolUsuarios: HasManyRepositoryFactory<RolUsuario, typeof Usuario.prototype.id>;
 
   public readonly rols: HasManyThroughRepositoryFactory<Rol, typeof Rol.prototype.id,
-          RolUsuario,
-          typeof Usuario.prototype.id
-        >;
+    RolUsuario,
+    typeof Usuario.prototype.id
+  >;
 
   constructor(
     @inject('datasources.mongodb') dataSource: MongodbDataSource, @repository.getter('RolUsuarioRepository') protected rolUsuarioRepositoryGetter: Getter<RolUsuarioRepository>, @repository.getter('RolRepository') protected rolRepositoryGetter: Getter<RolRepository>,

@@ -1,6 +1,6 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
-import {Rol} from './rol.model';
+import {Entity, hasMany, model, property} from '@loopback/repository';
 import {RolUsuario} from './rol-usuario.model';
+import {Rol} from './rol.model';
 
 @model()
 export class Usuario extends Entity {
@@ -61,12 +61,18 @@ export class Usuario extends Entity {
   })
   password: string;
 
+
+
   @hasMany(() => Rol, {through: {model: () => RolUsuario}})
-  rols: Rol[];
+  rols: Rol[]; // rols es una propiedad de muchos a muchos
+  @hasMany(() => RolUsuario)
+  rolUsuarios: RolUsuario[];
+
 
   constructor(data?: Partial<Usuario>) {
     super(data);
   }
+
   isValid(): boolean {
     //validación de letras
     const letrasRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ]+$/u;

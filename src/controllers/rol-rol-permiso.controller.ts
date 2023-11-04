@@ -10,6 +10,7 @@ import {
   get,
   getModelSchemaRef,
   getWhereSchemaFor,
+  HttpErrors,
   param,
   patch,
   post,
@@ -67,6 +68,19 @@ export class RolRolPermisoController {
       },
     }) rolPermiso: Omit<RolPermiso, 'id'>,
   ): Promise<RolPermiso> {
+    // Validación del rolId
+    const rol = await this.rolRepository.findById(id);
+    if (!rol) {
+      throw new HttpErrors.NotFound('Rol no encontrado');
+    }
+
+    // Validación del RolRolPermiso
+    const rolRolPermisos = await this.rolRepository.rolPermisos(id).find();
+    if (!rolRolPermisos.length) {
+      throw new HttpErrors.NotFound('RolRolPermiso no encontrado');
+    }
+
+    // Crear el RolRolPermiso
     return this.rolRepository.rolPermisos(id).create(rolPermiso);
   }
 
@@ -90,6 +104,11 @@ export class RolRolPermisoController {
     rolPermiso: Partial<RolPermiso>,
     @param.query.object('where', getWhereSchemaFor(RolPermiso)) where?: Where<RolPermiso>,
   ): Promise<Count> {
+    //Validación de RolRolPermiso
+    const rolrolPermisos = await this.rolRepository.rolPermisos(id).find();
+    if (!rolrolPermisos.length) {
+      throw new HttpErrors.NotFound('RolRolPermiso no se encuentra')
+    }
     return this.rolRepository.rolPermisos(id).patch(rolPermiso, where);
   }
 

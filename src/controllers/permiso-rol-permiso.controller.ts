@@ -10,6 +10,7 @@ import {
   get,
   getModelSchemaRef,
   getWhereSchemaFor,
+  HttpErrors,
   param,
   patch,
   post,
@@ -70,6 +71,11 @@ export class PermisoRolPermisoController {
     //Validaciones antes de crear-Rol Permiso
     if (rolPermiso.permisoId !== id) {
       throw new Error('La Id del permiso en el cuerpo no coincide con la id de la URL')
+    }
+    //Validación del rolPermisoId para evitar duplicados
+    const existingRolPermiso = await this.permisoRepository.findById(rolPermiso.permisoId);
+    if (existingRolPermiso) {
+      throw new HttpErrors.Conflict('RolPermiso con el ID especificado ya existe');
     }
     //Crear el RolPermiso
     return this.permisoRepository.rolPermisos(id).create(rolPermiso);

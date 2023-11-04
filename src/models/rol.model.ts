@@ -1,4 +1,4 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
 import {Permiso} from './permiso.model';
 import {RolPermiso} from './rol-permiso.model';
 
@@ -40,8 +40,10 @@ export class Rol extends Entity {
   })
   descripcion: string;
 
+
+
   @hasMany(() => Permiso, {through: {model: () => RolPermiso}})
-  permisos: Permiso[];
+  permisos: Permiso[]; // adquiere los datos para crear una lista de los permisos
 
   isValid(): boolean {
     // Validaciones para el nombre y la descripción
@@ -51,6 +53,13 @@ export class Rol extends Entity {
     const descripcionValida = this.descripcion && this.descripcion.length >= 3 &&
       this.descripcion.length <= 50;
     return true;
+  }
+  //Método para traer un listado de permisos
+  getPermisos(): Permiso[] {
+    if (!this.permisos) {
+      this.permisos = [];
+    }
+    return this.permisos
   }
 }
 
